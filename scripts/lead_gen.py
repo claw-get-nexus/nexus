@@ -474,7 +474,8 @@ class LeadGenAgent:
             sources = ['indeed', 'twitter', 'reddit']
         
         print("🔍 Nexus Automation — Lead Gen Agent")
-        print("🧪 Experiment Mode: 4 tracks running")
+        print(f"🧪 LIVE MODE: {self.live_mode}")
+        print(f"🧪 TWITTER API: {'configured' if self.twitter_api_key else 'missing'}")
         print("=" * 50)
         
         all_raw = []
