@@ -85,22 +85,40 @@ class StatusHandler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(status, indent=2).encode())
             
         elif self.path == '/trigger':
-            # Trigger pipeline restart
+            # Trigger pipeline with clean environment
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             
-            # Run pipeline in background
             import subprocess
             import sys
+            import os
+            
             try:
-                subprocess.Popen(
-                    [sys.executable, str(SKILL_DIR / "scripts" / "run_pipeline.py")],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                    cwd=str(SKILL_DIR)
-                )
-                response = {"status": "triggered", "timestamp": datetime.now().isoformat()}
+                # Clear environment for clean run
+                env = os.environ.copy()
+                env['PYTHONDONTWRITEBYTECODE'] = '1'
+                env['PYTHONUNBUFFERED'] = '1'
+                
+                # Run pipeline with logging
+                log_file = SKILL_DIR / "logs" / f"trigger_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+                log_file.parent.mkdir(parents=True, exist_ok=True)
+                
+                with open(log_file, 'w') as log:
+                    proc = subprocess.Popen(
+                        [sys.executable, str(SKILL_DIR / "scripts" / "run_pipeline.py")],
+                        stdout=log,
+                        stderr=log,
+                        cwd=str(SKILL_DIR),
+                        env=env
+                    )
+                
+                response = {
+                    "status": "triggered",
+                    "pid": proc.pid,
+                    "log": str(log_file),
+                    "timestamp": datetime.now().isoformat()
+                }
             except Exception as e:
                 response = {"status": "error", "error": str(e)}
             
