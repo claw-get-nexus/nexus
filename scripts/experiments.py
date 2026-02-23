@@ -14,7 +14,24 @@ SKILL_DIR = Path(__file__).parent.parent
 PIPELINE_DIR = SKILL_DIR / "assets" / "pipeline"
 
 def load_experiments():
-    with open(SKILL_DIR / "references" / "experiments.json") as f:
+    """Load experiments config with error handling."""
+    config_path = SKILL_DIR / "references" / "experiments.json"
+    
+    # Debug: print what we're looking for
+    print(f"   Looking for experiments at: {config_path}")
+    print(f"   Exists: {config_path.exists()}")
+    print(f"   SKILL_DIR: {SKILL_DIR}")
+    print(f"   CWD: {os.getcwd()}")
+    
+    if not config_path.exists():
+        # Try relative path
+        config_path = Path("references") / "experiments.json"
+        print(f"   Trying relative: {config_path.absolute()}")
+    
+    if not config_path.exists():
+        raise FileNotFoundError(f"experiments.json not found at {config_path}")
+    
+    with open(config_path) as f:
         return json.load(f)
 
 class ExperimentTracker:
