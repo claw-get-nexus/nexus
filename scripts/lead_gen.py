@@ -2,11 +2,13 @@
 """
 Nexus Automation — Lead Gen Agent
 Scrapes job boards, Twitter, Reddit for operational pain signals.
-Dry run mode: uses mock data, no external calls.
+LIVE MODE: Uses real Twitter API + mock job boards (Phase 1)
 """
 
 import json
+import os
 import re
+import requests
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Optional
@@ -22,6 +24,8 @@ class LeadGenAgent:
     def __init__(self):
         self.config = load_config()
         self.pain_keywords = self.config['lead_gen']['pain_keywords']
+        self.twitter_api_key = os.environ.get('TWITTER_API_KEY')
+        self.live_mode = os.environ.get('NEXUS_MODE') == 'live'
         PIPELINE_DIR.mkdir(parents=True, exist_ok=True)
         
     # ============ MOCK DATA SOURCES ============
@@ -135,6 +139,66 @@ class LeadGenAgent:
                 "posted": "2 days ago"
             }
         ]
+    
+    # ============ LIVE DATA SOURCES ============
+    
+    def search_twitter_live(self) -> List[Dict]:
+        """Search Twitter API for real pain signals."""
+        if not self.twitter_api_key:
+            print("  ⚠️  No TWITTER_API_KEY found, using mock data")
+            return self.mock_twitter_pain()
+        
+        queries = [
+            '"data entry" hiring',
+            '"manual work" team',
+            '"spreadsheet hell"',
+            '"copying and pasting" work',
+            '"hiring VA" OR "hiring assistant"',
+        ]
+        
+        all_tweets = []
+        
+        for query in queries[:2]:  # Limit to 2 queries to save credits
+            try:
+                url = f"https://api.twitter.com/2/tweets/search/recent"
+                params = {
+                    "query": query,
+                    "max_results": 10,
+                    "tweet.fields": "author_id,created_at,public_metrics"
+                }
+                headers = {"Authorization": f"Bearer {self.twitter_api_key}"}
+                
+                response = requests.get(url, params=params, headers=headers, timeout=30)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    tweets = data.get("data", [])
+                    
+                    for tweet in tweets:
+                        all_tweets.append({
+                            "id": f"tw_live_{tweet['id']}",
+                            "source": "twitter",
+                            "author": tweet.get("author_id", "unknown"),
+                            "author_name": "Twitter User",  # Would need user lookup
+                            "bio": "",
+                            "followers": tweet.get("public_metrics", {}).get("impression_count", 0),
+                            "text": tweet["text"],
+                            "posted": tweet["created_at"]
+                        })
+                    
+                    print(f"  🐦 Twitter query '{query[:30]}...': {len(tweets)} tweets")
+                else:
+                    print(f"  ⚠️  Twitter API error: {response.status_code}")
+                    
+            except Exception as e:
+                print(f"  ⚠️  Twitter search failed: {e}")
+        
+        # If no live tweets, fall back to mock
+        if not all_tweets:
+            print("  ⚠️  No live tweets, using mock data")
+            return self.mock_twitter_pain()
+        
+        return all_tweets
     
     # ============ SCORING ENGINE ============
     
@@ -363,6 +427,14 @@ class LeadGenAgent:
             print(f"  📋 Loaded {len(self.mock_indeed_jobs())} mock Indeed jobs")
         
         if 'twitter' in sources:
+            if self.live_mode and self.twitter_api_key:
+                print(f"  🐦 Searching Twitter LIVE...")
+                twitter_data = self.search_twitter_live()
+            else:
+                print(f"  🐦 Loading mock Twitter data...")
+                twitter_data = self.mock_twitter_pain()
+            all_raw.extend(twitter_data)
+            print(f"  🐦 Loaded {len(twitter_data)} Twitter posts")
             all_raw.extend(self.mock_twitter_pain())
             print(f"  🐦 Loaded {len(self.mock_twitter_pain())} mock Twitter posts")
         
