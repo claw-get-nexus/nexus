@@ -1,0 +1,105 @@
+{
+  "business": {
+    "name": "Nexus Automation",
+    "tagline": "We built an autonomous business. Want yours?",
+    "domain": "get-nexus.app",
+    "email": "hello@get-nexus.app"
+  },
+  
+  "pricing": {
+    "pilot": {
+      "price": 0,
+      "duration_days": 14,
+      "deliverable": "Working automation + 2 weeks runtime",
+      "conversion_target": "paid tier within 14 days"
+    },
+    "starter": {
+      "price": 500,
+      "billing": "monthly",
+      "includes": "1 workflow automation, email support, monthly optimization"
+    },
+    "growth": {
+      "price": 2000,
+      "billing": "monthly",
+      "includes": "5 workflow automations, priority support, weekly optimization, custom integrations"
+    },
+    "enterprise": {
+      "price": 5000,
+      "billing": "monthly",
+      "includes": "Unlimited workflows, dedicated agent cluster, SLA, quarterly business reviews"
+    }
+  },
+
+  "lead_gen": {
+    "min_score": 75,
+    "sources": ["indeed", "greenhouse", "twitter", "reddit"],
+    "pain_keywords": [
+      "data entry",
+      "manual process",
+      "spreadsheet",
+      "copy and paste",
+      "reconciliation",
+      "inventory management",
+      "hiring operations",
+      "hiring VA",
+      "hiring assistant"
+    ],
+    "target_industries": ["ecommerce", "saas", "agency", "fintech", "consulting"],
+    "company_size": "10-200 employees"
+  },
+
+  "outreach": {
+    "sequence_steps": 3,
+    "delays_hours": [0, 72, 168],
+    "channels": ["email"],
+    "daily_limit": 10
+  },
+
+  "sales": {
+    "discovery_questions": [
+      "What manual work takes up most of your team's time?",
+      "How many hours per week are spent on repetitive tasks?",
+      "What happens if this work doesn't get done?",
+      "Have you tried automation before? What happened?",
+      "What's the cost of continuing manually?"
+    ],
+    "qualification_criteria": {
+      "pain_confirmed": true,
+      "budget_confirmed": true,
+      "timeline": "within_30_days",
+      "decision_maker": true
+    }
+  },
+
+  "fulfillment": {
+    "pilot_duration_days": 14,
+    "handoff_threshold": 0.8,
+    "monitoring_enabled": true
+  },
+
+  "ops": {
+    "auto_approve": false,
+    "human_review_threshold": 5000,
+    "invoice_generation": "monthly",
+    "case_study_threshold": 30
+  },
+
+  "notifications": {
+    "channel": "telegram",
+    "events": [
+      "hot_lead_discovered",
+      "meeting_booked", 
+      "deal_closed",
+      "invoice_requested",
+      "system_error",
+      "daily_summary"
+    ],
+    "quiet_hours": "22:00-08:00"
+  },
+
+  "cron": {
+    "lead_gen": "0 * * * *",
+    "outreach": "0 9,14 * * *",
+    "ops_report": "0 18 * * *"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-02-23T23:35:28.656546",
+  "summary": {
+    "total_leads": 1,
+    "hot_leads": 0,
+    "warm_leads": 0,
+    "deals_closed": 1,
+    "total_deal_value": 2000,
+    "active_clients": 0,
+    "total_mrr": 0,
+    "case_studies": 0
+  },
+  "conversion_rates": {
+    "lead_to_deal": 100.0
+  },
+  "active_clients": [],
+  "recent_case_studies": []
+}

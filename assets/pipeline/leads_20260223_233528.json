@@ -1,0 +1,42 @@
+[
+  {
+    "id": "nexus_tw_001",
+    "discovered_at": "2026-02-23T23:35:28.654336",
+    "source": "twitter",
+    "company": "Unknown",
+    "contact": {
+      "name": "Marissa Chen",
+      "handle": "marissa_founder",
+      "bio": "Founder @RapidCart | 3x founder | E-commerce operator",
+      "followers": 3400
+    },
+    "pain": {
+      "text": "Spending 4 hours every morning manually reconciling inventory across Shopify, Amazon, and our warehouse system. This is insane. There has to be a better way \ud83d\ude2d",
+      "signals": [
+        "Daily recurring pain",
+        "Keyword: manual",
+        "Time mentioned: 4 hours",
+        "Emotional intensity high"
+      ],
+      "score": 70
+    },
+    "authority": {
+      "score": 60,
+      "tier": "decision_maker"
+    },
+    "context": {
+      "industry": "ecommerce",
+      "company_size": "unknown",
+      "budget_score": 60
+    },
+    "score": {
+      "total": 64,
+      "tier": "cool"
+    },
+    "outreach": {
+      "status": "pending",
+      "hook": "Hey Marissa \u2014 saw your post about inventory reconciliation eating your mornings. We built an automation that syncs inventory across platforms in real-time. Want to see it in action (free 2-week pilot)?",
+      "offer": "Multi-platform inventory sync (free 2-week pilot)"
+    }
+  }
+]

@@ -1,0 +1,39 @@
+[
+  {
+    "id": "deal_nexus_tw_001",
+    "lead_id": "nexus_tw_001",
+    "company": "Unknown",
+    "contact": {
+      "name": "Marissa Chen",
+      "handle": "marissa_founder",
+      "bio": "Founder @RapidCart | 3x founder | E-commerce operator",
+      "followers": 3400
+    },
+    "tier": "growth",
+    "value": 2000,
+    "billing": "monthly",
+    "pilot_duration_days": 14,
+    "status": "closed_won",
+    "closed_at": "2026-02-23T23:35:28.655375",
+    "discovery_notes": {
+      "What manual work takes up most of your team's time?": "Honestly? Copying data between our CRM and billing system. Takes 2-3 hours daily.",
+      "How many hours per week are spent on repetitive tasks?": "I'd estimate 30-40 hours across the team. Maybe more.",
+      "What happens if this work doesn't get done?": "Clients churn. They expect these reports weekly. No report = no renewal.",
+      "Have you tried automation before? What happened?": "Looked at some tools but couldn't justify the cost without proof it would work.",
+      "What's the cost of continuing manually?": "We're hiring a 3rd person for this next quarter. That's $60k+ annually."
+    },
+    "qualification": {
+      "score": 94,
+      "pain_confirmed": true,
+      "budget_confirmed": true,
+      "timeline": "within_30_days",
+      "decision_maker": true
+    },
+    "fulfillment_status": "needs_review",
+    "fulfillment_outcome": {
+      "status": "needs_review",
+      "build_hours": 10,
+      "issue": "Complex integration edge case"
+    }
+  }
+]
