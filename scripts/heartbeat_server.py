@@ -83,6 +83,28 @@ class StatusHandler(BaseHTTPRequestHandler):
             status = get_pipeline_status()
             self.wfile.write(json.dumps(status, indent=2).encode())
             
+        elif self.path == '/trigger':
+            # Trigger pipeline restart
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            
+            # Run pipeline in background
+            import subprocess
+            import sys
+            try:
+                subprocess.Popen(
+                    [sys.executable, str(SKILL_DIR / "scripts" / "run_pipeline.py")],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    cwd=str(SKILL_DIR)
+                )
+                response = {"status": "triggered", "timestamp": datetime.now().isoformat()}
+            except Exception as e:
+                response = {"status": "error", "error": str(e)}
+            
+            self.wfile.write(json.dumps(response).encode())
+            
         elif self.path == '/':
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
