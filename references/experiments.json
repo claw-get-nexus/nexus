@@ -1,0 +1,73 @@
+{
+  "experiments": {
+    "active_tracks": ["customer_support", "ecommerce_ops", "sales_automation"],
+    "duration_days": 14,
+    "success_metrics": {
+      "lead_quality_threshold": 75,
+      "target_reply_rate": 0.15,
+      "target_meeting_rate": 0.10
+    }
+  },
+  
+  "tracks": {
+    "customer_support": {
+      "name": "Customer Support Automation",
+      "twitter_queries": [
+        "support backlog team",
+        "hiring support agents",
+        "Zendesk alternative",
+        "overwhelmed tickets",
+        "customer service automation"
+      ],
+      "pain_keywords": [
+        "support tickets",
+        "customer service",
+        "help desk",
+        "response time",
+        "support team"
+      ],
+      "offer": "AI chatbot that handles 70% of support tickets instantly",
+      "pricing": {"starter": 500, "growth": 2000, "enterprise": 5000}
+    },
+    
+    "ecommerce_ops": {
+      "name": "E-commerce Operations",
+      "twitter_queries": [
+        "inventory sync Shopify Amazon",
+        "order processing manual",
+        "multi-channel inventory",
+        "ecommerce automation",
+        "dropshipping automation"
+      ],
+      "pain_keywords": [
+        "inventory management",
+        "order fulfillment",
+        "multi-channel",
+        "stock sync",
+        "manual orders"
+      ],
+      "offer": "Real-time inventory sync across all sales channels",
+      "pricing": {"starter": 300, "growth": 1500, "enterprise": 4000}
+    },
+    
+    "sales_automation": {
+      "name": "Sales & RevOps Automation",
+      "twitter_queries": [
+        "CRM cleanup",
+        "lead scoring",
+        "sales follow up",
+        "pipeline management",
+        "sales efficiency"
+      ],
+      "pain_keywords": [
+        "CRM data",
+        "lead qualification",
+        "follow up",
+        "pipeline",
+        "sales process"
+      ],
+      "offer": "Automated lead scoring and outreach that books meetings",
+      "pricing": {"starter": 500, "growth": 2500, "enterprise": 6000}
+    }
+  }
+}

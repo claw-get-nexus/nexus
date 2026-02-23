@@ -13,6 +13,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Optional
 
+from experiments import ExperimentTracker
+
 SKILL_DIR = Path(__file__).parent.parent
 PIPELINE_DIR = SKILL_DIR / "assets" / "pipeline"
 
@@ -23,6 +25,7 @@ def load_config():
 class LeadGenAgent:
     def __init__(self):
         self.config = load_config()
+        self.experiments = ExperimentTracker()
         self.pain_keywords = self.config['lead_gen']['pain_keywords']
         self.twitter_api_key = os.environ.get('TWITTER_API_KEY')
         self.live_mode = os.environ.get('NEXUS_MODE') == 'live'
@@ -141,6 +144,57 @@ class LeadGenAgent:
         ]
     
     # ============ LIVE DATA SOURCES ============
+    
+    def search_twitter_by_track(self, track_id: str) -> List[Dict]:
+        """Search Twitter for track-specific queries."""
+        queries = self.experiments.get_queries_for_track(track_id)
+        all_tweets = []
+        
+        if not self.twitter_api_key or not self.live_mode:
+            print(f"  ⚠️  Twitter not configured, using mock for {track_id}")
+            return self.mock_twitter_pain()
+        
+        for query in queries[:2]:  # Limit to save credits
+            try:
+                url = "https://api.twitter.com/2/tweets/search/recent"
+                params = {
+                    "query": query,
+                    "max_results": 10,
+                    "tweet.fields": "author_id,created_at,public_metrics"
+                }
+                headers = {"Authorization": f"Bearer {self.twitter_api_key}"}
+                
+                response = requests.get(url, params=params, headers=headers, timeout=30)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    tweets = data.get("data", [])
+                    
+                    for tweet in tweets:
+                        # Score against track
+                        score, signals = self.experiments.score_lead_for_track(tweet["text"], track_id)
+                        
+                        if score >= 40:  # Minimum threshold
+                            all_tweets.append({
+                                "id": f"tw_{track_id}_{tweet['id']}",
+                                "source": "twitter",
+                                "track": track_id,
+                                "author": tweet.get("author_id", "unknown"),
+                                "author_name": "Twitter User",
+                                "bio": "",
+                                "followers": tweet.get("public_metrics", {}).get("impression_count", 0),
+                                "text": tweet["text"],
+                                "posted": tweet["created_at"],
+                                "track_score": score,
+                                "track_signals": signals
+                            })
+                    
+                    print(f"  🐦 [{track_id}] '{query[:25]}...': {len(tweets)} tweets, {len([t for t in all_tweets if t.get('track') == track_id])} qualified")
+                    
+            except Exception as e:
+                print(f"  ⚠️  Twitter search failed for {track_id}: {e}")
+        
+        return all_tweets
     
     def search_twitter_live(self) -> List[Dict]:
         """Search Twitter API for real pain signals."""
@@ -413,30 +467,27 @@ class LeadGenAgent:
     # ============ MAIN EXECUTION ============
     
     def run(self, sources: List[str] = None) -> List[Dict]:
-        """Run lead generation across all sources."""
+        """Run lead generation across all sources with experiment tracking."""
         if sources is None:
             sources = ['indeed', 'twitter', 'reddit']
         
         print("🔍 Nexus Automation — Lead Gen Agent")
+        print("🧪 Experiment Mode: 3 tracks running")
         print("=" * 50)
         
         all_raw = []
         
+        # Run experiments: search each track
+        if 'twitter' in sources:
+            print("\n  📊 Running Twitter experiments...")
+            for track_id in self.experiments.experiments["experiments"]["active_tracks"]:
+                track_tweets = self.search_twitter_by_track(track_id)
+                all_raw.extend(track_tweets)
+        
+        # Mock data for other sources (for now)
         if 'indeed' in sources:
             all_raw.extend(self.mock_indeed_jobs())
-            print(f"  📋 Loaded {len(self.mock_indeed_jobs())} mock Indeed jobs")
-        
-        if 'twitter' in sources:
-            if self.live_mode and self.twitter_api_key:
-                print(f"  🐦 Searching Twitter LIVE...")
-                twitter_data = self.search_twitter_live()
-            else:
-                print(f"  🐦 Loading mock Twitter data...")
-                twitter_data = self.mock_twitter_pain()
-            all_raw.extend(twitter_data)
-            print(f"  🐦 Loaded {len(twitter_data)} Twitter posts")
-            all_raw.extend(self.mock_twitter_pain())
-            print(f"  🐦 Loaded {len(self.mock_twitter_pain())} mock Twitter posts")
+            print(f"\n  📋 Loaded {len(self.mock_indeed_jobs())} mock Indeed jobs")
         
         if 'reddit' in sources:
             all_raw.extend(self.mock_reddit_pain())
@@ -448,6 +499,11 @@ class LeadGenAgent:
         for item in all_raw:
             lead = self.calculate_score(item)
             if lead:
+                # Add track info if present
+                if 'track' in item:
+                    lead['experiment_track'] = item['track']
+                    lead['track_score'] = item.get('track_score', 0)
+                    self.experiments.log_lead(item['track'], lead)
                 leads.append(lead)
         
         leads.sort(key=lambda x: x['score']['total'], reverse=True)
@@ -471,10 +527,21 @@ class LeadGenAgent:
             score = lead['score']['total']
             name = lead['contact']['name']
             company = lead['company']
-            print(f"    [{tier}] {name} @ {company} — Score: {score}")
+            track = lead.get('experiment_track', 'general')
+            print(f"    [{tier}] [{track}] {name} @ {company} — Score: {score}")
             print(f"         Hook: {lead['outreach']['hook'][:60]}...")
         
         print(f"\n  📈 Summary: {len(hot)} HOT, {len(warm)} WARM leads ready")
+        
+        # Show experiment results
+        print(f"\n  🧪 EXPERIMENT RESULTS:")
+        summary = self.experiments.get_summary()
+        for track_id, data in summary.items():
+            print(f"    • {data['name']}: {data['total_leads']} leads, {data['high_quality']} high quality")
+        
+        # Save experiment results
+        exp_file = self.experiments.save_results()
+        print(f"\n  💾 Experiment results saved: {exp_file.name}")
         
         return leads
 
