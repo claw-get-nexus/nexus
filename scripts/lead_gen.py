@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import List, Dict, Optional
 
 from experiments import ExperimentTracker
+from job_boards import JobBoardScraper
 
 SKILL_DIR = Path(__file__).parent.parent
 PIPELINE_DIR = SKILL_DIR / "assets" / "pipeline"
@@ -26,6 +27,7 @@ class LeadGenAgent:
     def __init__(self):
         self.config = load_config()
         self.experiments = ExperimentTracker()
+        self.job_scraper = JobBoardScraper()
         self.pain_keywords = self.config['lead_gen']['pain_keywords']
         self.twitter_api_key = os.environ.get('TWITTER_API_KEY')
         self.live_mode = os.environ.get('NEXUS_MODE') == 'live'
@@ -472,26 +474,33 @@ class LeadGenAgent:
             sources = ['indeed', 'twitter', 'reddit']
         
         print("🔍 Nexus Automation — Lead Gen Agent")
-        print("🧪 Experiment Mode: 3 tracks running")
+        print("🧪 Experiment Mode: 4 tracks running")
         print("=" * 50)
         
         all_raw = []
         
-        # Run experiments: search each track
-        if 'twitter' in sources:
-            print("\n  📊 Running Twitter experiments...")
-            for track_id in self.experiments.experiments["experiments"]["active_tracks"]:
+        # Run experiments: search each track on Twitter + Job Boards
+        for track_id in self.experiments.experiments["experiments"]["active_tracks"]:
+            track = self.experiments.experiments["tracks"].get(track_id, {})
+            
+            print(f"\n  📊 Track: {track.get('name', track_id)}")
+            
+            # Twitter search
+            if 'twitter' in sources:
                 track_tweets = self.search_twitter_by_track(track_id)
                 all_raw.extend(track_tweets)
+            
+            # Job board search
+            if 'indeed' in sources:
+                job_queries = track.get('job_board_queries', [])
+                if job_queries:
+                    track_jobs = self.job_scraper.search_by_track(track_id, job_queries)
+                    all_raw.extend(track_jobs)
         
-        # Mock data for other sources (for now)
-        if 'indeed' in sources:
-            all_raw.extend(self.mock_indeed_jobs())
-            print(f"\n  📋 Loaded {len(self.mock_indeed_jobs())} mock Indeed jobs")
-        
+        # Mock Reddit data (for now)
         if 'reddit' in sources:
             all_raw.extend(self.mock_reddit_pain())
-            print(f"  👽 Loaded {len(self.mock_reddit_pain())} mock Reddit posts")
+            print(f"\n  👽 Loaded {len(self.mock_reddit_pain())} mock Reddit posts")
         
         print(f"\n  📊 Processing {len(all_raw)} raw signals...")
         

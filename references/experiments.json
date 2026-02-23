@@ -1,6 +1,6 @@
 {
   "experiments": {
-    "active_tracks": ["customer_support", "ecommerce_ops", "sales_automation"],
+    "active_tracks": ["customer_support", "ecommerce_ops", "sales_automation", "trade_business"],
     "duration_days": 14,
     "success_metrics": {
       "lead_quality_threshold": 75,
@@ -8,7 +8,7 @@
       "target_meeting_rate": 0.10
     }
   },
-  
+
   "tracks": {
     "customer_support": {
       "name": "Customer Support Automation",
@@ -18,6 +18,11 @@
         "Zendesk alternative",
         "overwhelmed tickets",
         "customer service automation"
+      ],
+      "job_board_queries": [
+        "customer support specialist",
+        "help desk technician",
+        "support agent remote"
       ],
       "pain_keywords": [
         "support tickets",
@@ -29,7 +34,7 @@
       "offer": "AI chatbot that handles 70% of support tickets instantly",
       "pricing": {"starter": 500, "growth": 2000, "enterprise": 5000}
     },
-    
+
     "ecommerce_ops": {
       "name": "E-commerce Operations",
       "twitter_queries": [
@@ -38,6 +43,11 @@
         "multi-channel inventory",
         "ecommerce automation",
         "dropshipping automation"
+      ],
+      "job_board_queries": [
+        "ecommerce operations manager",
+        "inventory coordinator",
+        "order fulfillment specialist"
       ],
       "pain_keywords": [
         "inventory management",
@@ -49,7 +59,7 @@
       "offer": "Real-time inventory sync across all sales channels",
       "pricing": {"starter": 300, "growth": 1500, "enterprise": 4000}
     },
-    
+
     "sales_automation": {
       "name": "Sales & RevOps Automation",
       "twitter_queries": [
@@ -58,6 +68,11 @@
         "sales follow up",
         "pipeline management",
         "sales efficiency"
+      ],
+      "job_board_queries": [
+        "sales operations analyst",
+        "CRM administrator",
+        "revenue operations"
       ],
       "pain_keywords": [
         "CRM data",
@@ -68,6 +83,33 @@
       ],
       "offer": "Automated lead scoring and outreach that books meetings",
       "pricing": {"starter": 500, "growth": 2500, "enterprise": 6000}
+    },
+
+    "trade_business": {
+      "name": "Trade Business Automation",
+      "twitter_queries": [
+        "plumber overwhelmed jobs",
+        "electrician business admin",
+        "contractor scheduling nightmare",
+        "builder invoicing headache",
+        "tradesman paperwork"
+      ],
+      "job_board_queries": [
+        "construction project coordinator",
+        "trade business administrator",
+        "field service scheduler"
+      ],
+      "pain_keywords": [
+        "scheduling jobs",
+        "invoicing customers",
+        "chasing payments",
+        "job tracking",
+        "supplier orders",
+        "quotes estimates",
+        "paperwork admin"
+      ],
+      "offer": "Automated scheduling, invoicing & job tracking built for trades",
+      "pricing": {"starter": 200, "growth": 800, "enterprise": 2000}
     }
   }
 }
