@@ -49,10 +49,18 @@ class ExperimentTracker:
                 signals.append(keyword)
         
         # Boost for high-intent phrases
-        intent_phrases = ["hiring", "looking for", "need help", "any recommendations"]
-        for phrase in intent_phrases:
+        intent_phrases = {
+            "hiring": 25,  # Strong budget signal
+            "looking for": 15,
+            "need help": 15,
+            "any recommendations": 10,
+            "overwhelmed": 20,  # Pain intensity
+            "drowning": 20,
+            "nightmare": 20,
+        }
+        for phrase, points in intent_phrases.items():
             if phrase in text_lower:
-                score += 15
+                score += points
                 signals.append(f"intent: {phrase}")
         
         return min(score, 100), list(set(signals))

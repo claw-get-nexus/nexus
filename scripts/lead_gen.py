@@ -393,7 +393,7 @@ class LeadGenAgent:
         total = int((pain_score * 0.45 + authority_score * 0.30 + budget_score * 0.25) * multiplier)
         
         # Demo mode: lower threshold for demonstration
-        min_score = 60  # Lowered from 75 for demo purposes
+        min_score = 50  # Lowered from 75 for demo purposes
         if total < min_score:
             return None
         
@@ -524,7 +524,7 @@ class LeadGenAgent:
             json.dump(leads, f, indent=2)
         
         # Display results
-        print(f"\n  ✅ Qualified {len(leads)} leads (min score: 60)")
+        print(f"\n  ✅ Qualified {len(leads)} leads (min score: 50)")
         print(f"  💾 Saved to: {filepath}\n")
         
         hot = [l for l in leads if l['score']['tier'] == 'hot']

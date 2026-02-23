@@ -1,0 +1,42 @@
+[
+  {
+    "id": "nexus_rd_002",
+    "discovered_at": "2026-02-24T05:12:22.964173",
+    "source": "reddit",
+    "company": "Unknown",
+    "contact": {
+      "name": "Unknown",
+      "handle": "ops_manager_saas",
+      "bio": "",
+      "followers": 0
+    },
+    "pain": {
+      "text": "I'm head of ops at a 60-person SaaS company. Our client success team manually compiles reports from 6 different tools every week. It's 20 hours per person. Leadership won't approve more headcount but won't invest in automation either. How do I make the business case?",
+      "signals": [
+        "Budget confirmed: hiring",
+        "High time cost: 20+ hours",
+        "Keyword: manual",
+        "Daily recurring pain"
+      ],
+      "score": 95
+    },
+    "authority": {
+      "score": 0,
+      "tier": "individual"
+    },
+    "context": {
+      "industry": "saas",
+      "company_size": "unknown",
+      "budget_score": 60
+    },
+    "score": {
+      "total": 57,
+      "tier": "cool"
+    },
+    "outreach": {
+      "status": "pending",
+      "hook": "Hi there \u2014 30+ hours on client reports is brutal. We automated a similar workflow for an agency, cut it to 2 hours/week. Happy to build you a free proof-of-concept?",
+      "offer": "Client reporting automation (free dashboard + 1 month)"
+    }
+  }
+]
