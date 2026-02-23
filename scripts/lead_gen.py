@@ -26,8 +26,18 @@ def load_config():
 class LeadGenAgent:
     def __init__(self):
         self.config = load_config()
-        self.experiments = ExperimentTracker()
-        self.job_scraper = JobBoardScraper()
+        try:
+            self.experiments = ExperimentTracker()
+            self.experiments_loaded = True
+        except Exception as e:
+            print(f"  ❌ ERROR: Failed to load experiments: {e}")
+            self.experiments = None
+            self.experiments_loaded = False
+        try:
+            self.job_scraper = JobBoardScraper()
+        except Exception as e:
+            print(f"  ❌ ERROR: Failed to load job scraper: {e}")
+            self.job_scraper = None
         self.pain_keywords = self.config['lead_gen']['pain_keywords']
         self.twitter_api_key = os.environ.get('TWITTER_API_KEY')
         self.live_mode = os.environ.get('NEXUS_MODE') == 'live'
@@ -481,7 +491,13 @@ class LeadGenAgent:
         all_raw = []
         
         # Run experiments: search each track on Twitter + Job Boards
-        for track_id in self.experiments.experiments["experiments"]["active_tracks"]:
+        if self.experiments_loaded and self.experiments:
+            tracks = self.experiments.experiments["experiments"]["active_tracks"]
+        else:
+            print("  ⚠️  Experiments not loaded, using default track")
+            tracks = ["general"]
+        
+        for track_id in tracks:
             track = self.experiments.experiments["tracks"].get(track_id, {})
             
             print(f"\n  📊 Track: {track.get('name', track_id)}")
