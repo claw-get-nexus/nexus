@@ -153,8 +153,8 @@ class LeadGenAgent:
         all_tweets = []
         
         if not self.twitter_api_key or not self.live_mode:
-            print(f"  ⚠️  Twitter not configured, using mock for {track_id}")
-            return self.mock_twitter_pain()
+            print(f"  ⚠️  Twitter not configured, skipping {track_id}")
+            return []
         
         for query in queries[:2]:  # Limit to save credits
             try:
@@ -497,10 +497,12 @@ class LeadGenAgent:
                     track_jobs = self.job_scraper.search_by_track(track_id, job_queries)
                     all_raw.extend(track_jobs)
         
-        # Mock Reddit data (for now)
-        if 'reddit' in sources:
+        # Skip mock data in live mode
+        if 'reddit' in sources and not self.live_mode:
             all_raw.extend(self.mock_reddit_pain())
             print(f"\n  👽 Loaded {len(self.mock_reddit_pain())} mock Reddit posts")
+        elif 'reddit' in sources and self.live_mode:
+            print(f"\n  👽 Reddit: Skipped (live mode)")
         
         print(f"\n  📊 Processing {len(all_raw)} raw signals...")
         
