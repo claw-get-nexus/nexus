@@ -17,6 +17,7 @@ def get_pipeline_status():
     """Read pipeline state from files."""
     status = {
         "timestamp": datetime.now().isoformat(),
+        "version": "1.0.1",  # Version marker for deploy verification
         "pipeline_runs": [],
         "leads_total": 0,
         "leads_by_track": {},
