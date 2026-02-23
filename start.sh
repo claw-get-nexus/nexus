@@ -1,17 +1,14 @@
 #!/bin/bash
 # Nexus Automation — Render Start Script
-# Runs heartbeat server in background + executes pipeline
+# Starts web server immediately, runs pipeline in background
 
 echo "🚀 Starting Nexus Automation..."
 
-# Start heartbeat server (keeps Render instance warm)
-python scripts/heartbeat_server.py &
-HEARTBEAT_PID=$!
-echo "Heartbeat server started (PID: $HEARTBEAT_PID)"
+# Run pipeline once in background (don't block startup)
+python scripts/run_pipeline.py > /tmp/pipeline.log 2>&1 &
+PIPELINE_PID=$!
+echo "Pipeline started in background (PID: $PIPELINE_PID)"
 
-# Run initial pipeline
-python scripts/run_pipeline.py
-
-# Keep container alive
-echo "Nexus Automation running. Waiting..."
-wait $HEARTBEAT_PID
+# Start heartbeat server (foreground — this keeps container alive)
+echo "Starting heartbeat server on port ${PORT:-8000}..."
+exec python scripts/heartbeat_server.py
